@@ -96,6 +96,15 @@ $ git push -u origin master
 ```shell
 git add filename
 git commit -m '修改日志'
+git push -u origin master
+```
+
+ git push -u origin master一般的IDE不需要这一步，add,commit就行
+
+
+
+```shell
+ git add img/      //这是添加文件夹
 ```
 
 
