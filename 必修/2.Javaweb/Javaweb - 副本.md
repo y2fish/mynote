@@ -359,10 +359,6 @@ Location:让网页重新定位
 
 maven由此诞生
 
-项目构建
-
-依赖管理
-
 ### 5.1、Maven项目架构管理工具
 
 我们目前用它来方便导入jar包
@@ -473,24 +469,5 @@ Path中新增Maven配置路径bin
 新建一个Tomcat Server，选择local，`remote是远程服务器`
 
 ![image-20191117091805179](img/image-20191117091805179.png)
-
-选择本地的Tomcat
-
-![image-20191117132508225](img/image-20191117132508225.png)
-
-访问路径为
-
- http://localhost:8080/javaweb_maven_war/ 
-
-IDEA中Maven的使用。右侧边栏，点击maven，会出现Maven的命令，插件，以及加载的jar包
-
-![image-20191117132919247](img/image-20191117132919247.png)
-
-
-
-
-
-
-
 
 
