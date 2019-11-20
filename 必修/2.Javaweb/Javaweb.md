@@ -490,7 +490,138 @@ IDEA中Maven的使用。右侧边栏，点击maven，会出现Maven的命令，�
 
 
 
+### 5.10 POM.xml
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Maven版本和头文件-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.baiyang</groupId>
+    <artifactId>javaweb-maven</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <!--packing:项目打包方式
+    jar:Java引用
+    war:Javaweb应用
+
+
+    -->
+    <packaging>war</packaging>
+
+    <name>javaweb-maven Maven Webapp</name>
+    <!-- FIXME change it to the project's website -->
+    <url>http://www.example.com</url>
+
+    <!--配置-->
+    <properties>
+        <!--编码方式-->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
+    </properties>
+
+    <!--项目依赖-->
+    <dependencies>
+        <!--具体应用的jar包-->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+<!--项目构建的插件-->
+    <build>
+        <finalName>javaweb-maven</finalName>
+        <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+            <plugins>
+                <plugin>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_war_packaging -->
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>3.0.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.8.0</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.1</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>3.2.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.5.2</version>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
+
+```
+
+具体<dependency>在[这个网站](https://mvnrepository.com/)查找
+
+Maven的高级之处就在于，他会导入该jar包所依赖的其它jar包
+
+**Maven问题**
+
+Maven由于他的约定大于配置，我们之后可能会遇到我们写的配置文件，无法被导出或者生效的问题，解决方案：
+
+```xml
+<build>
+    .......
+<!--在build中配置Resources，来防止我们资源导出失败的问题-->    
+      <resources>
+        <resource>
+            <directory>src/main/resources</directory>
+            <excludes>
+                <exclude>**/*.properties</exclude>
+                <exclude>**/*.xml</exclude>
+             </excludes>
+            <filtering>false</filtering>
+        </resource>
+        <resource>
+            <directory>src/main/java</directory>
+            <includes>
+                <include>**/*.properties</include>
+                <include>**/*.xml</include>
+            </includes>
+            <filtering>false</filtering>
+        </resource>
+    </resources>
+    ......
+</build>
+
+```
+
+### 5.11 问题与建议
+
+Maven版本不要用最新的，会有问题，最好用次新，apache-maven-3.5.4
+
+Java版本最好用1.8
+
+Tomcat闪退，startup.batt添加一行
+
+```shell
+SET JAVA_HOME=C:\Program Files\Java\jdk1.8.0_221
+```
 
 
 
+## 6、Servlet
 
