@@ -99,6 +99,10 @@ mybatis配置文件使用的是.xml文件，分为两类：
 - mysql:5.7
 - mysql-drive
 
+
+
+### 3.IDEA实战
+
 #### 3.1 创建maven工程
 
 点击`Create New Project`
@@ -302,14 +306,7 @@ create table t_user(
 </configuration>
 ```
 
-其中`datasource.properties`文件为
 
-```properties
-jdbc.driver=com.mysql.jdbc.Driver
-jdbc.url=jdbc:mysql://localhost:3306/mybatis?useUnicode=true&characterEncoding=utf8
-jdbc.username=root
-jdbc.password=
-```
 
 #### 2.2 编写测试类
 
@@ -356,6 +353,219 @@ public class Test01 {
 
 ### 3.映射文件
 
+用来配置DAO的sql操作，每个实体类对应一个映射文件，一般命名为<font color="red">XxxMapper.xml</font>，放到mapper包中
+
+#### 3.1 创建接口文件
+
+
+
+
+
+```java
+package dao;
+
+import entity.User;
+
+public interface UserDao {
+	//    添加用户
+    public void insertUser(User user);
+}
+
+```
+
+
+
+#### 3.2 创建映射文件
+
+
+
+```xml
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--
+    namespace属性：指定当前mapper配置文件的唯一标识符
+
+       配置文件+接口:值必须是对应接口的全名
+-->
+<mapper namespace="dao.UserDao">
+    <!--
+    id 与接口中的函数名一致
+    parameterType：输入参数类型  
+    -->
+    <insert id="insertUser" parameterType="entity.User">
+        INSERT INTO t_user(id, name, password, phone, address)
+         VALUES
+          (#{id},#{name},#{password},#{phone},#{address})
+   </insert>
+
+</mapper>
+```
+
+
+
+####  3.3 编写测试类
+
+
+
+```java
+import dao.UserDao;
+import entity.User;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+
+public class Test01 {
+    public static void main(String[] args) throws IOException {
+        /*
+        * 创建SqlSession 称为持久化管理器，是mybatis的核心
+        *
+        *
+        *  SqlSessionFactoryBuilder
+        *   sqlSessionFactory
+        *   sqlSession
+        * */
+        //这三行来自官网 https://mybatis.org/mybatis-3/zh/getting-started.html
+        //从 XML 中构建 SqlSessionFactory
+
+        String resource = "mybatis-config.xml";
+        //MyBatis 包含一个名叫 Resources 的工具类，它包含一些实用方法，可使从 classpath 或其他位置加载资源文件更加容易。
+        InputStream inputStream = Resources.getResourceAsStream(resource);
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+
+        SqlSession sqlSession = sqlSessionFactory.openSession();
+//        Connection connection = sqlSession.getConnection();
+//        System.out.println(connection);
+
+
+        User user = new User(1,"baiyang","baiyang","182030930","重庆");
+
+//        参数为接口的Class对象
+        UserDao userDao = sqlSession.getMapper(UserDao.class);
+        userDao.insertUser(user);
+        sqlSession.commit();
+
+    }
+}
+
+```
+
+
+
+### 4.MybatisUtil工具类
+
+
+
+```java
+package util;
+
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSession;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.SqlSessionFactoryBuilder;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+public class MybatisUtil {
+    private static InputStream inputStream;
+    static {
+        String resource = "mybatis-config.xml";
+        //MyBatis 包含一个名叫 Resources 的工具类，它包含一些实用方法，可使从 classpath 或其他位置加载资源文件更加容易。
+         inputStream = null;
+        try {
+            inputStream = Resources.getResourceAsStream(resource);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+    public static SqlSession getSqlSession(){
+        SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+        return sqlSessionFactory.openSession();
+    }
+
+    public  static  void  close(SqlSession sqlSession ){
+            if (sqlSession != null) {
+                sqlSession.close();
+            }
+
+    }
+}
+
+```
+
+
+
+```java
+import dao.UserDao;
+import entity.User;
+import org.apache.ibatis.session.SqlSession;
+import util.MybatisUtil;
+
+public class Test02 {
+    public static void main(String[] args) {
+        SqlSession sqlSession = MybatisUtil.getSqlSession();
+        User user = new User(2,"baixue","baixue","18203092312","重庆");
+        UserDao userDao = sqlSession.getMapper(UserDao.class);
+        userDao.insertUser(user);
+
+        sqlSession.commit();
+        sqlSession.close();
+
+    }
+}
+
+```
+
+
+
+## 四、主配置文件详解
+
+### 1.取别名typeAliases
+
+
+
+```xml
+    <!--
+        配置别名 为当前工程中的某些类指定别名
+    -->
+    <typeAliases>
+        <!--
+        别名不区分大小写，但建议与类名一致
+            typeAlias 为某个类配置别名
+                type属性 指定类名
+                alias属性 指定类的别名
+        -->
+        <typeAlias type="" alias="" />
+        <!--
+            package 为某个包下的所有类配置别名
+                name属性 指定包名，该包下的所有类的别名就是其类名
+
+        -->
+        <package name=""  />
+    </typeAliases>
+```
+
+
+
+### 2.引用属性文件properties
+
+
+
+2.1 新建datasource.properties
+
+```properties
+jdbc.driver=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://localhost:3306/mybatis?useSSL=true&amp;useUnicode=true&amp;characterEncoding=utf8
+jdbc.username=root
+jdbc.password=
+```
 
 
 
@@ -363,12 +573,52 @@ public class Test01 {
 
 
 
+2.2 插入如下一句
+
+```xml
+ <properties resource="datasource.properties" />
+```
+
+
+
+2.3 引用
+
+`${}`
+
+```xml
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url"
+                          value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+```
 
 
 
 
 
+## 五、映射文件详解
 
+### 1.获取主键
+
+ insert标签 中的`useGeneratedKeys="true" keyProperty="id"`属性能够让mybatis框架返回当前
+
+> ```xml
+> <!--    useGeneratedKeys 是否返回主键，默认为false 自动将返回的主键绑定到参数对象的主键属性中 
+> keyProperty 指定主键-->
+> ```
+
+```xml
+<insert id="getPrimary" parameterType="User" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO t_user( name, password, phone, address)
+        VALUES
+            (#{name},#{password},#{phone},#{address})
+    </insewrt>
+```
+
+### 2.更新操作update
 
 
 
