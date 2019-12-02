@@ -1,27 +1,45 @@
 # Javaweb学习笔记
 
-## 必修
+## 1、JavaSE
 
-### 1.JavaSE
+### 1.1 基础语法
 
-### 2.JavaWeb
+### 1.2 面向对象
 
-### 3.Mybatis
+### 1.3 语言进阶
 
-### 4.Spring
 
-### 5.SpringMVC
 
-### 6.SSM整合->项目实战
+## 2、JavaWeb
 
-### 7.Springboot
+### 2.1 数据库（5天）
 
-### 8.SpringCloud
+### 2.2 网页前端（5天）
 
-## 选学
+### 2.3 Web核心技术（15天）
+
+### 2.4 项目实战（5天）
+
+
+
+## 3、JavaEE
+
+### 3.1 Mybatis
+
+### 3.2 Spring
+
+### 3.3 SpringMVC
+
+### 3.4 SSM整合->项目实战
+
+### 3.5 Springboot
+
+### 3.6 SpringCloud
+
+
+
+## 其它
 
 ### 1.git
 
-### 2.JVM
-
-### 3.高并发
+### 2.Maven
